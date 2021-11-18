@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test
+  sql:
+    init:
+      data-locations: classpath:h2.sql
+logging:
+  level:
+    com:
+      myifeng: debug
