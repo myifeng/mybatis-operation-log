@@ -1,6 +1,6 @@
-package com.myifeng.example.mapper;
+package io.github.myifeng.example.mapper;
 
-import com.myifeng.example.entity.User;
+import io.github.myifeng.example.entity.User;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -8,8 +8,13 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-    @Select("select * from user")
-    List<User> findAll();
+    @Select("<script> " +
+            "select * from user " +
+            "<where>" +
+            "<if test='name != null and name != &quot;&quot;'>and name like concat('%', #{name}, '%')</if>" +
+            "</where>" +
+            "</script>")
+    List<User> findAll(User user);
 
     @Select("select * from user where id=#{id}")
     User findOne(String id);

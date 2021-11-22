@@ -7,5 +7,6 @@ spring:
       data-locations: classpath:h2.sql
 logging:
   level:
-    com:
-      myifeng: debug
+    io:
+      github:
+        myifeng: debug

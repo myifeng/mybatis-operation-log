@@ -1,4 +1,4 @@
-package com.myifeng.example.entity;
+package io.github.myifeng.example.entity;
 
 public class User {
 

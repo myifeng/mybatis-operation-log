@@ -1,7 +1,7 @@
-package com.myifeng.example.controller;
+package io.github.myifeng.example.controller;
 
-import com.myifeng.example.entity.User;
-import com.myifeng.example.mapper.UserMapper;
+import io.github.myifeng.example.entity.User;
+import io.github.myifeng.example.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,8 +15,8 @@ public class UserController {
     UserMapper mapper;
 
     @GetMapping
-    public List<User> list(){
-        return mapper.findAll();
+    public List<User> list(User user){
+        return mapper.findAll(user);
     }
 
     @GetMapping("/{id}")
