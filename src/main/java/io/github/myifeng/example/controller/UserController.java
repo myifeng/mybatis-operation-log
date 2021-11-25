@@ -11,8 +11,11 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
-    UserMapper mapper;
+    final UserMapper mapper;
+
+    public UserController(UserMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @GetMapping
     public List<User> list(User user){

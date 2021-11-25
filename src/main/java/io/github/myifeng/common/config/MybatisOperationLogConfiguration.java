@@ -18,11 +18,14 @@ import java.util.List;
 @AutoConfigureAfter(MybatisAutoConfiguration.class)
 public class MybatisOperationLogConfiguration {
 
-    @Autowired
-    MybatisOperationLogInterceptor mybatisOperationLogInterceptor;
+    final MybatisOperationLogInterceptor mybatisOperationLogInterceptor;
 
-    @Autowired
-    List<SqlSessionFactory> sqlSessionFactories;
+    final List<SqlSessionFactory> sqlSessionFactories;
+
+    public MybatisOperationLogConfiguration(MybatisOperationLogInterceptor mybatisOperationLogInterceptor, List<SqlSessionFactory> sqlSessionFactories) {
+        this.mybatisOperationLogInterceptor = mybatisOperationLogInterceptor;
+        this.sqlSessionFactories = sqlSessionFactories;
+    }
 
     @PostConstruct
     public void addMybatisOperationLogInterceptor(){
