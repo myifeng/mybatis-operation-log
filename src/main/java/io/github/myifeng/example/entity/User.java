@@ -1,18 +1,8 @@
 package io.github.myifeng.example.entity;
 
-public class User {
-
-    private String id;
+public class User extends BaseEntity{
 
     private String name;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
