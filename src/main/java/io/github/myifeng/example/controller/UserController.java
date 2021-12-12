@@ -11,8 +11,11 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
-    UserMapper mapper;
+    final UserMapper mapper;
+
+    public UserController(UserMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @GetMapping
     public List<User> list(User user){
@@ -25,12 +28,14 @@ public class UserController {
     }
 
     @PostMapping
-    public int save(@RequestBody User user){
-        return mapper.save(user);
+    public User save(@RequestBody User user){
+        mapper.save(user);
+        return user;
     }
 
     @PutMapping("/{id}")
     public int update(@PathVariable String id, @RequestBody User user){
+        user.setId(id);
         return mapper.update(user);
     }
 
