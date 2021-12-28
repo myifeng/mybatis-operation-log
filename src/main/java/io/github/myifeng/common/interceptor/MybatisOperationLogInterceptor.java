@@ -1,6 +1,8 @@
 package io.github.myifeng.common.interceptor;
 
-import org.apache.ibatis.executor.Executor;
+import io.github.myifeng.common.utils.ReflectionUtil;
+import org.apache.ibatis.executor.statement.RoutingStatementHandler;
+import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
@@ -14,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -21,7 +24,7 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 
 @Component
-@Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
+@Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class MybatisOperationLogInterceptor implements Interceptor {
 
     Logger logger = LoggerFactory.getLogger(MybatisOperationLogInterceptor.class);
@@ -36,7 +39,7 @@ public class MybatisOperationLogInterceptor implements Interceptor {
 
     @Override
     public Object plugin(Object target) {
-        if (target instanceof Executor) {
+        if (target instanceof RoutingStatementHandler) {
             return Plugin.wrap(target, this);
         } else {
             return target;
@@ -50,15 +53,14 @@ public class MybatisOperationLogInterceptor implements Interceptor {
 
     private void recordMybatisOperationLog(Invocation invocation) {
         try {
-            final MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
-            Object parameter = null;
-            if (invocation.getArgs().length > 1) {
-                parameter = invocation.getArgs()[1];
+            if (invocation.getTarget() instanceof RoutingStatementHandler) {
+                RoutingStatementHandler statementHandler = (RoutingStatementHandler) invocation.getTarget();
+                StatementHandler delegate = (StatementHandler) ReflectionUtil.getFieldValue(statementHandler, "delegate");
+                MappedStatement mappedStatement = (MappedStatement) ReflectionUtil.getFieldValue(delegate, "mappedStatement");
+                BoundSql boundSql = delegate.getBoundSql();
+                String sql = parseSql(boundSql, mappedStatement.getConfiguration());
+                logger.debug(sql);
             }
-            BoundSql boundSql = mappedStatement.getBoundSql(parameter);
-            Configuration configuration = mappedStatement.getConfiguration();
-            String sql = parseSql(boundSql, configuration);
-            logger.info(sql);
         } catch (Exception e) {
             e.printStackTrace();
         }
